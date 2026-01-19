@@ -1,0 +1,1 @@
+# SNP-based-chip-Heritability-Estimation-using-LD-Score-Regression
