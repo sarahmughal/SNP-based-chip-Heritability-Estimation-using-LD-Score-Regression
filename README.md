@@ -1,4 +1,4 @@
-# SNP-based-chip-Heritability-Estimation-using-LD-Score-Regression
+# SNP Based Chip Heritability Estimation Using LD Score Regression
 
 Download GWAS summary statistics
 https://ftp.ebi.ac.uk/pub/databases/gwas/summary_statistics/GCST007001-GCST008000/GCST007140/
