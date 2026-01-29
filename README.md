@@ -1,5 +1,4 @@
-# EPI 217: Molecular and Genetic Epidemiology I
-## SNP-Based (“Chip”) Heritability Estimation Using LD Score Regression
+# SNP-Based (“Chip”) Heritability Estimation Using LD Score Regression
 
 This project estimates SNP-based (chip) heritability (h²) using LD Score Regression (LDSC) on GWAS summary statistics. The analysis uses the `gwaslab` Python package along with a European LD reference panel and HapMap3 SNP filtering.
 
