@@ -1,87 +1,44 @@
-# SNP Based Chip Heritability Estimation Using LD Score Regression
+# SNP-Based (“Chip”) Heritability Estimation Using LD Score Regression
 
-Download GWAS summary statistics
-https://ftp.ebi.ac.uk/pub/databases/gwas/summary_statistics/GCST007001-GCST008000/GCST007140/
-Retrieved from https://www.ebi.ac.uk/gwas/ and a cholesterol paper by Hoffman
-Download an LD reference panel
-Set up a clean Python environment
-Run LD Score Regression using gwaslab
-Report h², calculate a 95% CI, and explain it in words
+This project estimates SNP-based (chip) heritability (h²) using LD Score Regression (LDSC) on GWAS summary statistics. The analysis uses the `gwaslab` Python package along with a European LD reference panel and HapMap3 SNP filtering.
 
-Project Overview:
+---
 
-Desktop/
-└── assign2_ldsc/
-    ├── filter_hm3.py      
-    ├── assign2_ldsc.ipynb
-    ├── .venv/
-    └── tmp/
-        ├── GERA-sqrtHDL.tsv.gz
-        └── eur_w_ld_chr/
-            └── w_hm3.snplist
+## Project Goals
 
-Open Terminal
+- Download GWAS summary statistics  
+- Filter SNPs to HapMap3 variants  
+- Download and prepare a European LD reference panel  
+- Set up a clean Python environment  
+- Run LD Score Regression using `gwaslab`  
+- Report SNP heritability (h²), calculate a 95% confidence interval, and interpret the result  
 
-mkdir assign2_ldsc
-cd assign2_ldsc
-mkdir tmp
-cd tmp
+---
 
-Now download the GWAS summary statistics:
+## Data Sources
 
-brew install wget
-wget https://ftp.ebi.ac.uk/pub/databases/gwas/summary_statistics/GCST007001-GCST008000/GCST007140/GERA-sqrtHDL.tsv.gz
+**GWAS Summary Statistics**
+- Trait: HDL cholesterol  
+- File: `GERA-sqrtHDL.tsv.gz`  
+- Source: EBI GWAS Catalog  
+- https://www.ebi.ac.uk/gwas/  
+- https://ftp.ebi.ac.uk/pub/databases/gwas/summary_statistics/GCST007001-GCST008000/GCST007140/
 
-Quick sanity check:
+**LD Reference Panel**
+- European LD scores  
+- https://zenodo.org/records/8182036  
 
-gunzip -c GERA-sqrtHDL.tsv.gz | head -n 5
+---
 
-Download European reference panel, and extract it
+## Project Structure
 
-wget https://zenodo.org/records/8182036/files/eur_w_ld_chr.tar.gz
-tar -zxvf eur_w_ld_chr.tar.gz
-
-Install gwaslab (may need to run brew install python@3.12 first)
-
-python -m venv .venv
-source .venv/bin/activate
-pip install gwaslab
-
-Create filter_hm3.py
-
-import gzip
-
-# Load HapMap3 SNP list into a set
-with open("tmp/eur_w_ld_chr/w_hm3.snplist") as f:
-    hm = {l.split("\t")[0] for l in f if l.strip()}
-
-print(f"loaded in {len(hm)} hapmap3 snps.")
-
-# Stream the GWAS file and write out only HapMap3 SNPs
-count_in = 0
-count_out = 0
-
-with gzip.open("tmp/GERA-sqrtHDL.tsv.gz", "rt") as f_in, \
-     gzip.open("tmp/GERA-sqrtHDL-hm3.tsv.gz", "wt") as f_out:
-
-    header = f_in.readline()
-    f_out.write(header)
-
-    for line in f_in:
-        count_in += 1
-        snp_id = line.split("\t", 1)[0]  # first column is SNP_ID
-        if snp_id in hm:
-            f_out.write(line)
-            count_out += 1
-
-print(f"read in {count_in} snps.")
-print(f"wrote out {count_out} hapmap3 snps.")
-
-Create a Jupyter notebook and conduct LD Score Regression (LDSC) utilizing gwaslab
-
-		mkdir assign2_ldsc.ipynb
-
-
-
-
-
+```text
+assign2_ldsc/
+├── assign2_ldsc.ipynb
+├── filter_hm3.py
+├── .venv/
+└── tmp/
+    ├── GERA-sqrtHDL.tsv.gz
+    ├── GERA-sqrtHDL-hm3.tsv.gz
+    └── eur_w_ld_chr/
+        └── w_hm3.snplist
