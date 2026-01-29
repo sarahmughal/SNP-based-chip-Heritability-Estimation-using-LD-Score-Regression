@@ -1,0 +1,63 @@
+## Setup Instructions
+
+### 1. Python Environment Setup
+
+```bash
+brew install python@3.12
+python -m venv .venv
+source .venv/bin/activate
+pip install gwaslab
+
+### 2. Create Project Directories
+
+```bash
+mkdir assign2_ldsc
+cd assign2_ldsc
+mkdir tmp
+cd tmp
+
+### 3. Download GWAS Summary Statistics
+
+```bash
+brew install wget
+wget https://ftp.ebi.ac.uk/pub/databases/gwas/summary_statistics/GCST007001-GCST008000/GCST007140/GERA-sqrtHDL.tsv.gz
+
+gunzip -c GERA-sqrtHDL.tsv.gz | head -n 5 # Quick Sanity Check
+
+### 4. Download and Extract European LD Reference Panel
+
+```bash
+wget https://zenodo.org/records/8182036/files/eur_w_ld_chr.tar.gz
+tar -zxvf eur_w_ld_chr.tar.gz
+
+### 5. HapMap3 SNP Filtering: Create a script called filter_hm3.py
+
+import gzip
+
+# Load HapMap3 SNP list into a set
+with open("tmp/eur_w_ld_chr/w_hm3.snplist") as f:
+    hm = {line.split("\t")[0] for line in f if line.strip()}
+
+print(f"Loaded {len(hm)} HapMap3 SNPs.")
+
+count_in = 0
+count_out = 0
+
+# Stream GWAS file and write out only HapMap3 SNPs
+with gzip.open("tmp/GERA-sqrtHDL.tsv.gz", "rt") as f_in, \
+     gzip.open("tmp/GERA-sqrtHDL-hm3.tsv.gz", "wt") as f_out:
+
+    header = f_in.readline()
+    f_out.write(header)
+
+    for line in f_in:
+        count_in += 1
+        snp_id = line.split("\t", 1)[0]  # SNP ID is first column
+        if snp_id in hm:
+            f_out.write(line)
+            count_out += 1
+
+print(f"Read in {count_in} SNPs.")
+print(f"Wrote out {count_out} HapMap3 SNPs.")
+
+
